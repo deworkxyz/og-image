@@ -10,17 +10,9 @@ const emojify = (text: string) => twemoji.parse(text, twOptions);
 const rglr = readFileSync(`${__dirname}/../_fonts/Inter-Regular.woff2`).toString('base64');
 const bold = readFileSync(`${__dirname}/../_fonts/Inter-Bold.woff2`).toString('base64');
 const mono = readFileSync(`${__dirname}/../_fonts/Vera-Mono.woff2`).toString('base64');
+const background = readFileSync(`${__dirname}/../../public/background.png`).toString('base64');
 
-function getCss(theme: string, fontSize: string) {
-    let background = 'white';
-    let foreground = 'black';
-    let radial = 'lightgray';
-
-    if (theme === 'dark') {
-        background = 'black';
-        foreground = 'white';
-        radial = 'dimgray';
-    }
+function getCss(_theme: string, fontSize: string) {
     return `
     @font-face {
         font-family: 'Inter';
@@ -44,9 +36,8 @@ function getCss(theme: string, fontSize: string) {
       }
 
     body {
-        background: ${background};
-        background-image: radial-gradient(circle at 25px 25px, ${radial} 2%, transparent 0%), radial-gradient(circle at 75px 75px, ${radial} 2%, transparent 0%);
-        background-size: 100px 100px;
+        background: url(data:image/png;base64,${background});
+        background-size: cover;
         height: 100vh;
         display: flex;
         text-align: center;
@@ -75,6 +66,10 @@ function getCss(theme: string, fontSize: string) {
 
     .logo {
         margin: 0 75px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 0 100px #ffffff44;
+        /* border: 2px solid #ffffff88; */
     }
 
     .plus {
@@ -98,13 +93,22 @@ function getCss(theme: string, fontSize: string) {
         font-family: 'Inter', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
-        color: ${foreground};
-        line-height: 1.8;
+        color: white;
+        line-height: 1.3;
+    }
+    
+    .subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 60px;
+        font-style: normal;
+        color: white;
+        opacity: 50%;
+        line-height: 1.3;
     }`;
 }
 
 export function getHtml(parsedReq: ParsedRequest) {
-    const { text, theme, md, fontSize, images, widths, heights } = parsedReq;
+    const { text, subtitle, theme, md, fontSize, images, widths, heights } = parsedReq;
     return `<!DOCTYPE html>
 <html>
     <meta charset="utf-8">
@@ -126,6 +130,7 @@ export function getHtml(parsedReq: ParsedRequest) {
                 md ? marked(text) : sanitizeHtml(text)
             )}
             </div>
+            ${!!subtitle ? `<div class="subtitle">${emojify(subtitle)}</div>` : undefined}
         </div>
     </body>
 </html>`;
