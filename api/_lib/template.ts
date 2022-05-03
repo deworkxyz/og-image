@@ -88,6 +88,7 @@ function getCss(_theme: string, fontSize: string) {
         font-family: 'Avenir', 'Noto Sans SC', sans-serif;
         font-size: ${sanitizeHtml(fontSize)};
         font-style: normal;
+        font-weight: bold;
         color: white;
         line-height: 1.3;
     }
